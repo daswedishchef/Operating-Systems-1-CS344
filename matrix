@@ -14,11 +14,12 @@ else
 fi
 case $1 in
     dims)
-        echo "dims option"
         printf "Rows: "
-        wc -l < "$var"
-        read -r line < "$var"
-        "$line" > grep -o "   " | wc -l
+        echo | wc -l < "$var"
+        printf "Columns: "
+        read -a arr line < "$var"
+        echo "${#arr[@]}"
+        exit 0
         ;;
     transpose)
         echo "trans option"
