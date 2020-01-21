@@ -1,0 +1,54 @@
+#!/bin/bash
+var="/nfs/stak/users/carlsosp/os1/prog1/$2"
+if [ "$#" -lt 2 ]
+then
+    echo "Matrix operation script by Spencer Carlson
+    Please type matrix [operation] [matrix name]"
+    exit 1
+elif [[ -r $2 && -s $2 ]]
+then
+    echo "---- Result ----"
+else
+    echo "Enter valid matrix"
+    exit 2
+fi
+case $1 in
+    dims)
+        printf "Rows: "
+        echo | wc -l < "$var"
+        printf "Columns: "
+        read -a arr line < "$var"
+        echo "${#arr[@]}"
+        exit 0
+        ;;
+    transpose)
+        echo "trans option"
+        ;;
+    mean)
+        echo "mean option"
+
+        ;;
+    add)
+        echo "add option"
+        ;;
+    multiply)
+        echo "mult option"
+        ;;
+esac
+
+#transpose function
+#reflects matrix along main diagonal
+#function trans()
+
+##mean function
+#creates 1xn matrix with average of each column
+#function mean()
+
+#add function
+#adds matrices and throws err if dims!=
+#function add()
+
+#mulitply function
+#multiplies 2 matrices
+#function mult()
+
