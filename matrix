@@ -1,5 +1,4 @@
 #!/bin/bash
-echo $0
 valid2=0
 var=0
 var2=0
@@ -47,10 +46,9 @@ case $1 in
         printf "Columns: "
         read -a arr < "$var"
         echo "${#arr[@]}"
-        exit 0;;
+        exit 0
+        ;;
     transpose)
-        #cut -f1 $var > read -a arr3
-        #echo ${arr3[@]}
         rows=0
         i=0
         declare -a output=()
@@ -75,9 +73,27 @@ case $1 in
             done
             printf "\n"
         done
+        exit 0
         ;;
     mean)
-        echo "mean option"
+        declare -a sum=()
+        row=0
+        while read -a meanln ;
+        do
+            for ((i=0; i<${#meanln[@]}; i++))
+            do
+                ((sum[i] += meanln[i]))
+            done
+            ((row+=1))
+        done < "$var"
+        for ((i=0; i<${#sum[@]}; i++))
+        do
+            sum[$i]=$((sum[i] / row))
+            printf "%s"${sum[$i]}
+            printf "	"
+        done
+        echo
+        exit 0
         ;;
     add)
         if [ $valid2 -ne 1 ]
@@ -85,7 +101,6 @@ case $1 in
             echo "two valid matrices required" >&2
             exit 1
         fi
-        echo "add option"
         ;;
     multiply)
         if [ $valid2 -ne 1 ]
@@ -98,6 +113,7 @@ case $1 in
     \?) 
         echo "enter: dims, transpose, mean, add, or multiply" >&2
         exit 2
+        ;;
 esac
 
 #transpose function
