@@ -2,6 +2,9 @@
 valid2=0
 var=0
 var2=0
+
+#Argument verification block
+
 case $# in
     0)
         echo "Please enter matrix [operation] [m1] [m2]" >&2
@@ -14,7 +17,6 @@ case $# in
         if [[ -r $2 && -s $2 ]]
         then
             var="/nfs/stak/users/carlsosp/os1/prog1/$2"
-            echo "---- Result ----"
         else
             echo "Enter valid matrix" >&2
             exit 1
@@ -27,7 +29,6 @@ case $# in
                 valid2=1
                 var="/nfs/stak/users/carlsosp/os1/prog1/$2"
                 var2="/nfs/stak/users/carlsosp/os1/prog1/$3"
-                echo "---- Result ----"
             else
                 echo "Error reading second matrix" >&2
                 exit 1
@@ -39,6 +40,9 @@ case $# in
     \?)
         ;;
 esac
+
+#execution block
+
 case $1 in
     dims)
         printf "Rows: "
@@ -101,6 +105,29 @@ case $1 in
             echo "two valid matrices required" >&2
             exit 1
         fi
+        lines=$(wc -l < $var)
+        read -a top < "$var"
+        length=${#top[@]}
+        lines2=$(wc -l < $var2)
+        read -a top < "$var2"
+        length2=${#top[@]}
+        if [ $length -ne $length2 ] || [ $lines -ne $lines2 ]
+        then
+            echo "Matrices are different dimensions, they must be equal" >&2
+            exit 1
+        fi
+        while read -a m1 ;
+        do
+            read -a m2 < $var2
+            for ((i=0; i<${#m1[@]}; i++))
+            do
+                temp=$((m1[i] + m2[i]))
+                printf "%s"$temp
+                printf "	"
+            done
+            printf "\n"
+        done < "$var"
+        exit 0
         ;;
     multiply)
         if [ $valid2 -ne 1 ]
