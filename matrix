@@ -1,10 +1,4 @@
 #!/bin/bash
-#---note to the grader---
-#I couldnt figure out how to get the bad command and 0 argument thing to work
-#and also be able to pipe things in. I know it hangs up when you try to cat
-#"var" and it doesn't exist
-#Also, my multiplication works with only the hardcoded matrix and im not too sure why
-#my code does rely on there being a "\n" at the end of each line including the last
 valid2=0
 var=0
 var2=0
