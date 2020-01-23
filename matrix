@@ -2,7 +2,6 @@
 valid2=0
 var=0
 var2=0
-
 #Argument verification block
 
 case $# in
@@ -18,7 +17,7 @@ case $# in
     2)
         if [[ -r $2 && -s $2 ]]
         then
-            var="/nfs/stak/users/carlsosp/os1/prog1/$2"
+            var="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd )/$2"
         else
             echo "Enter valid matrix" >&2
             exit 1
@@ -30,8 +29,8 @@ case $# in
             if [[ -r $3 && -s $3 ]]
             then
                 valid2=1
-                var="/nfs/stak/users/carlsosp/os1/prog1/$2"
-                var2="/nfs/stak/users/carlsosp/os1/prog1/$3"
+                var="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd )/$2"
+                var2="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd )/$3"
             else
                 echo "Error reading second matrix" >&2
                 exit 1
