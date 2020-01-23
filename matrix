@@ -1,4 +1,10 @@
 #!/bin/bash
+#---note to the grader---
+#I couldnt figure out how to get the bad command and 0 argument thing to work
+#and also be able to pipe things in. I know it hangs up when you try to cat
+#"var" and it doesn't exist
+#Also, my multiplication works with only the hardcoded matrix and im not too sure why
+#my code does rely on there being a "\n" at the end of each line including the last
 valid2=0
 var=0
 var2=0
@@ -15,6 +21,7 @@ case $# in
         fi
         ;;
     2)
+        #if file is readable and not empty, store filepath
         if [[ -r $2 && -s $2 ]]
         then
             var="$( cd "$(dirname "${BASH_SOURCE[0]}")" && pwd )/$2"
@@ -24,6 +31,7 @@ case $# in
         fi
         ;;
     3)
+        #if files are readable and not empty, store filepaths
         if [[ -r $2 && -s $2 ]]
         then
             if [[ -r $3 && -s $3 ]]
@@ -120,13 +128,14 @@ case $1 in
         done < "$var"
         len=${#sum[@]}
         #divide and print out sum array containing mean values
+        #I tried the rounding expression given online and couldnt get it to work
         for ((i=0; i<len-1; i++))
         do
-            sum[$i]=$((sum[i] / row))
+            sum[$i]=$((sum[i]/row))
             printf "%s"${sum[$i]}
             printf "	"
         done
-        sum[$i]=$((sum[i] / row))
+        sum[$i]=$((sum[i]/row))
         printf "%s"${sum[$i]}
         printf "\n"
         exit 0
