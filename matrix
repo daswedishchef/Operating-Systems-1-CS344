@@ -182,6 +182,67 @@ case $1 in
         row2=$(wc -l < $var2)
         read -a top < "$var2"
         col2=${#top[@]}
+        if [ $col1 -ne $row2 ]
+        then
+            echo "Matrix no work"
+            exit 1
+        fi
+        cf=$row1
+        rf=$col2
+        declare -a m1=()
+        declare -a m2=()
+        declare -a product=()
+        i=0
+        while read -a arr2 ;
+        do
+            for ((j=0; j<$col1; j++))
+            do
+                m1[$i]=${arr2[$j]}
+                ((i+=1))
+            done
+        done < "$var"
+        i=0
+        while read -a arr ;
+        do
+            for ((j=0; j<$col2; j++))
+            do
+                m2[$i]=${arr[$j]}
+                ((i+=1))
+            done
+        done < "$var2"
+        for ((i=0; i<rf; i++))
+        do
+            for ((j=0; j<cf; j++))
+            do
+                op1=0
+                for ((k=0; k<col1; k++))
+                do
+                    idx=$((k+col1*i))
+                    idy=$((j+col2*k))
+                    temp1=${m1[$idx]}
+                    temp2=${m2[$idy]}
+                    op2=$((temp1*temp2))
+                    op1=$((op1+op2))
+                    
+                done
+                idx=$((i*cf+j))
+                product[$idx]=$op1
+            done
+        done
+        index=0
+        for ((i=0; i<rf; i++))
+        do
+            for ((j=0; j<cf-1; j++))
+            do
+                printf "%s"${product[$index]}
+                printf "	"
+                ((index+=1))
+            done
+            printf "%s"${product[$index]}
+            printf "\n"
+            ((index+=1))
+        done
+        exit 0
         ;;
     \?) 
         echo "enter: dims, transpose, mean, add, or multiply" >&2
