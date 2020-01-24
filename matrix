@@ -122,14 +122,19 @@ case $1 in
         done < "$var"
         len=${#sum[@]}
         #divide and print out sum array containing mean values
-        #I tried the rounding expression given online and couldnt get it to work
         for ((i=0; i<len-1; i++))
         do
-            sum[$i]=$((sum[i]/row))
+            temp=$(((sum[i]>0)*2-1))
+            temp=$(((row/2)*temp))
+            temp=$((sum[i]+temp))
+            sum[$i]=$((temp/row))
             printf "%s"${sum[$i]}
             printf "	"
         done
-        sum[$i]=$((sum[i]/row))
+        temp=$(((sum[i]>0)*2-1))
+        temp=$(((row/2)*temp))
+        temp=$((sum[i]+temp))
+        sum[$i]=$((temp/row))
         printf "%s"${sum[$i]}
         printf "\n"
         exit 0
@@ -216,8 +221,8 @@ case $1 in
             exit 1
         fi
         #set final matrix size
-        cf=$row1
-        rf=$col2
+        cf=$col2
+        rf=$row1
         #read matrices into arrays
         declare -a m1=()
         declare -a m2=()
