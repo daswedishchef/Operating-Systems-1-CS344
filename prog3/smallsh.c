@@ -55,16 +55,19 @@ int process(char **input, int bkfl){
             globstat = 0;
             globstat = execvp(input[0], input);
             perror("");
+            exit(0);
             return 0;
         }
         default: {
             //parent goes here
-            if((bkfl==0)&&(engv==0)){
+            if((bkfl==0)||(engv==1)){
                 //parent waits for foreground process
                 myotherpid = waitpid(mypid, &pstat, WUNTRACED);
                 return 0;
             }
+            //starts process in background
             else if((bkfl==1)&&(engv==0)){
+                //ISSUE - child becomes zombie after completing
                 printf("process supposed to start in background\n");
                 myotherpid = waitpid(mypid, &pstat, WNOHANG);
                 return 0;
@@ -88,6 +91,7 @@ int mountain_doit(char **input, int num){
     }
     //check for $$
     for(i = 0;i < num; i++){
+        //printf("%s\n", input[i]);
         if(!strcmp(input[i], "$$")){
             //input[i] = (char*)getpid();
         }
@@ -98,6 +102,7 @@ int mountain_doit(char **input, int num){
     //check for background specification
     if(!strcmp(input[num-1], "&")){
         input[num-1]=NULL;
+        input[num]=NULL;
         return process(input,1);
     }
     else{
@@ -135,6 +140,7 @@ void main(){
         getline(&input, &buf, stdin);
         //parse user input
         arg = strtok(input, delim);
+        index = 0;
         while(arg != NULL){
             output[index] = arg;
             index += 1;
@@ -152,11 +158,11 @@ void main(){
         //free our variables
         free(arg);
         free(input);
-        free(output);
         int i;
         for(i = 0;i<index+1;i++){
             output[i]=NULL;
         }
+        free(output);
    }while(stat == 0);
    return;
 }
