@@ -90,10 +90,11 @@ int mountain_doit(char **input, int num){
         }
     }
     //check for $$
+    pid_t expans;
     for(i = 0;i < num; i++){
         //printf("%s\n", input[i]);
         if(!strcmp(input[i], "$$")){
-            //input[i] = (char*)getpid();
+            sprintf(input[i], "%d", getpid());
         }
     }
     if(!strcmp(input[0], "#")){
@@ -128,9 +129,10 @@ void stphand(int sig){
 //Main reads line, calls functions, and frees memory
 void main(){
     int stat = 0;
+    char **output = malloc(sizeof(char*));
     signal(SIGTSTP, stphand);
     do{
-        char **output = malloc(sizeof(char*));
+        output = realloc(output, sizeof(char*));
         char *input;
         ssize_t buf = 0;
         int index = 0;
@@ -162,7 +164,6 @@ void main(){
         for(i = 0;i<index+1;i++){
             output[i]=NULL;
         }
-        free(output);
    }while(stat == 0);
    return;
 }
