@@ -36,6 +36,24 @@ int myexit(char **input){
 int (*natives[])(char**) = {&mycd,&myexit,&mystatus};
 char *native[] = {"cd","exit","status"};
 
+//signal handlers
+void stphand(int sig){
+    if(engv==1){
+        char* msg1 = "\n-Exiting foreground only mode-\n: ";
+        write(STDOUT_FILENO, msg1, 36);
+        engv = 0;
+    }
+    else if(engv==0){
+        char* msg2 = "\n-Entering foreground only mode-\n: ";
+        write(STDOUT_FILENO, msg2, 35);
+        engv = 1;
+    }
+}
+void inthand(int sig){
+    char* msg3 = "Terminated by signal 2\n";
+    write(STDOUT_FILENO, msg3, 24);
+    exit(0);
+}
 
 //Execution function
 int process(char **input, int bkfl){
@@ -43,6 +61,7 @@ int process(char **input, int bkfl){
     int pstat = -5;
     pid_t mypid = -5;
     pid_t myotherpid = -5;
+    
     mypid = fork();
     switch(mypid){
         case -1: {
@@ -53,6 +72,14 @@ int process(char **input, int bkfl){
         case 0: {
             //child goes here
             globstat = 0;
+            //add sigint handler for foreground processes
+            if((bkfl==0)||(engv==1)){
+                signal(SIGINT, inthand);
+            }
+            //Ignore signal if in background
+            else if((bkfl==1)&&(engv==0)){
+                signal(SIGINT, SIG_IGN);
+            }
             globstat = execvp(input[0], input);
             perror("");
             exit(0);
@@ -62,13 +89,15 @@ int process(char **input, int bkfl){
             //parent goes here
             if((bkfl==0)||(engv==1)){
                 //parent waits for foreground process
+                signal(SIGTSTP, SIG_IGN);
                 myotherpid = waitpid(mypid, &pstat, WUNTRACED);
+                signal(SIGTSTP, stphand);
                 return 0;
             }
             //starts process in background
             else if((bkfl==1)&&(engv==0)){
-                //ISSUE - child becomes zombie after completing
-                printf("process supposed to start in background\n");
+                //printf("process supposed to start in background\n");
+                signal(SIGCHLD, SIG_IGN);
                 myotherpid = waitpid(mypid, &pstat, WNOHANG);
                 return 0;
             }
@@ -89,14 +118,7 @@ int mountain_doit(char **input, int num){
             return (*natives[i])(input);
         }
     }
-    //check for $$
-    pid_t expans;
-    for(i = 0;i < num; i++){
-        //printf("%s\n", input[i]);
-        if(!strcmp(input[i], "$$")){
-            sprintf(input[i], "%d", getpid());
-        }
-    }
+    
     if(!strcmp(input[0], "#")){
         return 0;
     }
@@ -110,38 +132,48 @@ int mountain_doit(char **input, int num){
         return process(input,0);
     }
 }
-//signal handlers
-void inthand(int sig){
-    printf(" cntrl+c recieved\n");
-}
-void stphand(int sig){
-    if(engv==1){
-        char* msg1 = "\n-Exiting foreground only mode-\n";
-        write(STDOUT_FILENO, msg1, 36);
-        engv = 0;
+//check for $$
+char* checkpid(char* input){
+    int index;
+    char *midput;
+    char *temp;
+    char *pos = NULL;
+    pos = strstr(input,"$$");
+    index = pos - input;
+    if(pos){
+        midput = malloc((strlen(input)+7)*sizeof(char));
+        strncpy(midput,input,index);
+        sprintf(midput,"%s%d",midput,getpid());
+        temp = malloc((strlen(input)-index+1)*sizeof(char));
+        strncpy(temp,input+index+2,strlen(input)-index+2);
+        strcat(midput,temp);
+        return midput;
     }
-    else if(engv==0){
-        char* msg2 = "\n-Entering foreground only mode-\n";
-        write(STDOUT_FILENO, msg2, 37);
-        engv = 1;
+    else{
+        return input;
     }
+    free(midput);
+    free(temp);
 }
+
 //Main reads line, calls functions, and frees memory
 void main(){
     int stat = 0;
     char **output = malloc(sizeof(char*));
+    char *input;
     signal(SIGTSTP, stphand);
+    signal(SIGINT, SIG_IGN);
     do{
         output = realloc(output, sizeof(char*));
-        char *input;
         ssize_t buf = 0;
         int index = 0;
         char *arg = NULL;
         printf(": ");
         //get raw user input
         getline(&input, &buf, stdin);
+        //check for variable expansion
+        arg = strtok(checkpid(input),delim);
         //parse user input
-        arg = strtok(input, delim);
         index = 0;
         while(arg != NULL){
             output[index] = arg;
@@ -164,6 +196,7 @@ void main(){
         for(i = 0;i<index+1;i++){
             output[i]=NULL;
         }
+        
    }while(stat == 0);
    return;
 }
