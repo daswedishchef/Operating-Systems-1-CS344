@@ -80,8 +80,8 @@ int main(int argc, char *argv[])
 		while(fgetc(mykey)!=EOF){
 			keynum++;
 		}
-		if(keynum>txnum){
-			fprintf(stderr, "key cannot be longer than text\n");
+		if(keynum<txnum){
+			fprintf(stderr, "text cannot be longer than text\n");
 			return 1;
 		}
 		char input[24];
@@ -141,8 +141,8 @@ int main(int argc, char *argv[])
 		free(textbuff);
 	}
 	else{
-		fprintf(stderr,"This program connects exlusively with otp_enc_d\n");
-		return 1;
+		fprintf(stderr,"This program connects exlusively with otp_enc_d, port: %d\n",portNumber);
+		exit(2);
 	}
 	//printf("\nclient gang out\n");
 	close(socketFD); // Close the socket
