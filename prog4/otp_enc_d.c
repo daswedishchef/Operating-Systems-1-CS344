@@ -13,6 +13,7 @@ char ops[27] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ ";
 char toOps(int num){
 	if(num>27){
 		fprintf(stderr,"error converting int");
+		return '0';
 	}
 	return ops[num];
 }
@@ -113,7 +114,7 @@ int main(int argc, char *argv[])
 			plaintext = malloc((len2+1)*sizeof(char));
 			strcpy(plaintext,buffer);
 			printf("plaintext: %s\n",plaintext);
-			int i,j,c,asc;
+			int i,c;
 			int temp,temp2;
 			char *cyphertext;
 			cyphertext = malloc((len2+1)*sizeof(char));
@@ -126,27 +127,26 @@ int main(int argc, char *argv[])
 				temp = 0;
 				temp2 = 0;
 				tempc = 0;
-				if(plaintext[j]=='\n'){
+				if(plaintext[i]=='\n'){
 					break;
 				}
 				else{
-					temp = opsout(plaintext[j]);
+					temp = opsout(plaintext[i]);
 					temp2 = opsout(mykey[c]);
 					temp += temp2;
-					if(temp>26){
-						temp = temp - 26;
-					}
+					temp % 27;
 					//printf("\n%d ", temp);
 					//printf(" %d %d\n",temp2,i);
-					cyphertext[j] = toOps(temp);
+					cyphertext[i] = toOps(temp);
 					if(c==len){
 						c=0;
 					}
 				}
 				c++;
 			}
+			cyphertext[len2] = '\0';
 			//free and exit child
-			printf("cyphertext: %s\n",plaintext);
+			printf("cyphertext: %s\n",cyphertext);
 			close(establishedConnectionFD); // Close the existing socket which is connected to the client
 			free(mykey);
 			free(buffer);
