@@ -60,6 +60,9 @@ int main(int argc, char *argv[])
 	int numchild = 0;
 	while(1){
 		// Accept a connection, blocking if one is not available until one connects
+		do(
+			wait()
+		)
 		sizeOfClientInfo = sizeof(clientAddress); // Get the size of the address for the client that will connect
 		establishedConnectionFD = accept(listenSocketFD, (struct sockaddr *)&clientAddress, &sizeOfClientInfo); // Accept
 		if (establishedConnectionFD < 0) error("ERROR on accept");
@@ -70,47 +73,43 @@ int main(int argc, char *argv[])
 			error("Error creating process");
 		}
 		else if(mypid == 0){
-			//get key
+			//get size of key
 			buffer = calloc(256,256);
 			charsRead = recv(establishedConnectionFD, buffer, 24, 0);
 			int len;
 			len = atoi(buffer);
-			printf("\nlen: %d\nchars: %d",len,charsRead);
 			printf("SERVER: I received this from the client: \"%s\"\n", buffer);
+			//send success for key size
 			charsRead = send(establishedConnectionFD, "success", 16, 0);
+			//allocate buffer for key and get it
 			free(buffer);
-			//printf("\nlen: %d\n", len);
 			buffer = calloc(len,(len+1)*sizeof(char));
 			charsRead = recv(establishedConnectionFD, buffer, len, 0);
 			if(charsRead<len) error("Error receiving data\n");
-			//printf("\nline%d: %d\n",__LINE__,charsRead);
+			//copy key from buffer into mykey
 			char *mykey;
 			mykey = malloc((len+1)*sizeof(char));
-			//printf("\nline%d: %d\n",__LINE__,charsRead);
 			strcpy(mykey,buffer);
 			printf("key %p: %s\n",mykey,mykey);
+			//send success for key
 			charsRead = send(establishedConnectionFD, "success", 16, 0);
 
-			//get text
+			//get size of text
 			int len2;
 			free(buffer);
 			buffer = calloc(256, 256);
-			//printf("server: im getting size of next thing");
 			charsRead = recv(establishedConnectionFD, buffer, 24, 0);
 			if(charsRead<0) error("Error receiving data\n");
-			//printf("\nline%d: %d\n",__LINE__,charsRead);
 			len2 = atoi(buffer);
 			printf("SERVER: I received this from the client: \"%s\"\n", buffer);
-			//printf("\nfree on: %d\n",__LINE__);
 			free(buffer);
 			buffer = calloc(len2,(len2+1)*sizeof(char));
+			//send success for size
 			charsRead = send(establishedConnectionFD, "success", 16, 0);
-			//printf("server: im getting size of next thing1");
+			//read text
 			charsRead = recv(establishedConnectionFD, buffer, len2, 0);
-			//printf("\nline%d: %d\n",__LINE__,charsRead);
-			//printf("\nerrno: %d\n",errno);
-			//printf("\nlen: %d\n",len);
 			if(charsRead<len2) error("Error receiving data\n");
+			//copy text into plaintext
 			char *plaintext;
 			plaintext = malloc((len2+1)*sizeof(char));
 			strcpy(plaintext,buffer);
@@ -119,8 +118,9 @@ int main(int argc, char *argv[])
 			int temp,temp2;
 			char *cyphertext;
 			cyphertext = malloc((len2+1)*sizeof(char));
-			printf("\nlen: %d\n",len2);
-			
+
+			//encryption
+
 			int randkey, tempc;
 			c=0;
 			temp = 0;
@@ -146,17 +146,16 @@ int main(int argc, char *argv[])
 				}
 				c++;
 			}
+			//free and exit child
 			printf("cyphertext: %s\n",plaintext);
 			close(establishedConnectionFD); // Close the existing socket which is connected to the client
-			//printf("\nfree on: %d\n",__LINE__);
 			free(mykey);
-			//printf("\nfree on: %d\n",__LINE__);
 			free(buffer);
-			//printf("\nfree on: %d\n",__LINE__);
 			free(plaintext);
 			exit(0);
 		}
 		else{
+			//increment number of children processes and reap children
 			numchild++;
 			close(establishedConnectionFD);
 			signal(SIGCHLD, SIG_IGN);
@@ -164,6 +163,5 @@ int main(int argc, char *argv[])
 		}
 	}
 	close(listenSocketFD); // Close the listening socket
-    //printf("%s\n","exiting");
 	return 0;
 }
