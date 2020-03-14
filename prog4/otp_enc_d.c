@@ -12,6 +12,7 @@ char ops[27] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ ";
 int numchild = 0;
 
 void chldhand(int signal){
+	waitpid((pid_t)(-1),0,WNOHANG);
 	numchild--;
 }
 
