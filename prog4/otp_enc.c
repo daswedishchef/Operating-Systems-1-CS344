@@ -7,14 +7,14 @@
 #include <netinet/in.h>
 #include <netdb.h> 
 
-void error(const char *msg) { perror(msg); exit(0); } // Error function used for reporting issues
+void error(const char *msg) { perror(msg); } // Error function used for reporting issues
 
 int main(int argc, char *argv[])
 {
 	int socketFD, portNumber, charsWritten, charsRead;
 	struct sockaddr_in serverAddress;
 	struct hostent* serverHostInfo;
-	char buffer[256];
+	char *buffer;
     
 	if (argc < 4) { fprintf(stderr,"USAGE: %s plainttext key port\n", argv[0]); exit(0); } // Check usage & args
 
@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
 		error("CLIENT: ERROR connecting");
 
 	// Get return message from server
+	buffer = malloc(16*sizeof(char));
 	memset(buffer, '\0', 4*sizeof(char)); // Clear out the buffer again for reuse
 	charsRead = recv(socketFD, buffer, 256, 0); // Read data from the socket, leaving \0 at end
 	if (charsRead < 3) error("CLIENT: ERROR reading from socket");
@@ -79,7 +80,8 @@ int main(int argc, char *argv[])
 			fprintf(stderr,"Client: Server did not respond\n");
 			return 1;
 		}
-		memset(buffer,'\0',(keynum+1)*sizeof(char));
+		free(buffer);
+		buffer = calloc(keynum,(keynum+1)*sizeof(char));
 		rewind(mykey);
 		char *textbuff;
 		textbuff = malloc(keynum*sizeof(char));

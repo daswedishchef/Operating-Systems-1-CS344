@@ -60,9 +60,8 @@ int main(int argc, char *argv[])
 	int numchild = 0;
 	while(1){
 		// Accept a connection, blocking if one is not available until one connects
-		do(
-			wait()
-		)
+		do{
+		}while(numchild>=5);
 		sizeOfClientInfo = sizeof(clientAddress); // Get the size of the address for the client that will connect
 		establishedConnectionFD = accept(listenSocketFD, (struct sockaddr *)&clientAddress, &sizeOfClientInfo); // Accept
 		if (establishedConnectionFD < 0) error("ERROR on accept");
@@ -121,12 +120,12 @@ int main(int argc, char *argv[])
 
 			//encryption
 
-			int randkey, tempc;
+			int tempc;
 			c=0;
-			temp = 0;
-			temp2 = 0;
-			tempc = 0;
 			for(i=0;i<len2;i++){
+				temp = 0;
+				temp2 = 0;
+				tempc = 0;
 				if(plaintext[j]=='\n'){
 					break;
 				}
@@ -139,7 +138,7 @@ int main(int argc, char *argv[])
 					}
 					//printf("\n%d ", temp);
 					//printf(" %d %d\n",temp2,i);
-					plaintext[j] = toOps(temp);
+					cyphertext[j] = toOps(temp);
 					if(c==len){
 						c=0;
 					}
