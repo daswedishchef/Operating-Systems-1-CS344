@@ -6,8 +6,24 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h> 
+#include <stdbool.h>
 
 void error(const char *msg) { perror(msg); } // Error function used for reporting issues
+
+bool wait_for_success(int socketFD) {
+	int charsRead;
+	char buffer[16];
+	printf("Client: Waiting for success\n");
+	memset(buffer, '\0', 16);
+	charsRead = recv(socketFD, buffer, 16, 0);
+	if (charsRead < 1 || strcmp(buffer, "success"))
+	{
+		fprintf(stderr, "Client: Server did not respond. It instead said: %s with %d\n", buffer, charsRead);
+		return false;
+	}
+	printf("Client: Got for success\n");
+	return true;
+}
 
 int main(int argc, char *argv[])
 {
