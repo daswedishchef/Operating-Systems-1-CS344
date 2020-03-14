@@ -72,7 +72,6 @@ int main(int argc, char *argv[])
 		// Accept a connection, blocking if one is not available until one connects
 		do{
 		}while(numchild>=5);
-		printf("\nnumchild: %d\n",numchild);
 		sizeOfClientInfo = sizeof(clientAddress); // Get the size of the address for the client that will connect
 		establishedConnectionFD = accept(listenSocketFD, (struct sockaddr *)&clientAddress, &sizeOfClientInfo); // Accept
 		if (establishedConnectionFD < 0) error("ERROR on accept");
@@ -84,7 +83,6 @@ int main(int argc, char *argv[])
 		}
 		else if(mypid == 0){
 			//get size of key
-			printf("\nnumchild: %d\n",numchild);
 			buffer = calloc(256,256);
 			charsRead = recv(establishedConnectionFD, buffer, 24, 0);
 			int len;
@@ -101,7 +99,7 @@ int main(int argc, char *argv[])
 			char *mykey;
 			mykey = malloc((len+1)*sizeof(char));
 			strcpy(mykey,buffer);
-			//printf("key %p: %s\n",mykey,mykey);
+			printf("key %p: %s\n",mykey,mykey);
 			//send success for key
 			charsRead = send(establishedConnectionFD, "success", 16, 0);
 
@@ -124,7 +122,7 @@ int main(int argc, char *argv[])
 			char *plaintext;
 			plaintext = malloc((len2+1)*sizeof(char));
 			strcpy(plaintext,buffer);
-			//printf("plaintext: %s\n",plaintext);
+			printf("SERVER - plaintext: %s\n",plaintext);
 			int i,c;
 			int temp,temp2;
 			char *cyphertext;
@@ -152,8 +150,8 @@ int main(int argc, char *argv[])
 			}
 			cyphertext[len2] = '\0';
 			//free and exit child
-			//printf("cyphertext: %s\n",cyphertext);
-
+			printf("SERVER - cyphertext: %s\n",cyphertext);
+			charsRead = send(establishedConnectionFD, cyphertext, len2, 0);
 			close(establishedConnectionFD); // Close the existing socket which is connected to the client
 			free(mykey);
 			free(buffer);
