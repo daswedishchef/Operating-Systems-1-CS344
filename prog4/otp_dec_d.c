@@ -130,6 +130,7 @@ int main(int argc, char *argv[])
 
 			int tempc;
 			c=0;
+			printf("\nLen: %d\nlen2: %d",len,len2);
 			for(i=0;i<len2;i++){
 				temp = 0;
 				temp2 = 0;
@@ -138,10 +139,7 @@ int main(int argc, char *argv[])
 					break;
 				}
 				else{
-					temp = (opsout(plaintext[i]) - opsout(mykey[c]));
-                    if(temp<0){
-                        temp+=27;
-                    }
+					temp = (opsout(plaintext[i]) - opsout(mykey[c]))%27;
 					cyphertext[i] = toOps(temp);
 					if(c==len){
 						c=0;
