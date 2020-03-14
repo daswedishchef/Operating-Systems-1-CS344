@@ -87,7 +87,6 @@ int main(int argc, char *argv[])
 			charsRead = recv(establishedConnectionFD, buffer, 24, 0);
 			int len;
 			len = atoi(buffer);
-			//printf("SERVER: I received this from the client: \"%s\"\n", buffer);
 			//send success for key size
 			charsRead = send(establishedConnectionFD, "success", 16, 0);
 			//allocate buffer for key and get it
@@ -99,7 +98,7 @@ int main(int argc, char *argv[])
 			char *mykey;
 			mykey = malloc((len+1)*sizeof(char));
 			strcpy(mykey,buffer);
-			printf("key %p: %s\n",mykey,mykey);
+			//printf("key %p: %s\n",mykey,mykey);
 			//send success for key
 			charsRead = send(establishedConnectionFD, "success", 16, 0);
 
@@ -110,7 +109,6 @@ int main(int argc, char *argv[])
 			charsRead = recv(establishedConnectionFD, buffer, 24, 0);
 			if(charsRead<0) error("Error receiving data\n");
 			len2 = atoi(buffer);
-			//printf("SERVER: I received this from the client: \"%s\"\n", buffer);
 			free(buffer);
 			buffer = calloc(len2,(len2+1)*sizeof(char));
 			//send success for size
@@ -122,7 +120,7 @@ int main(int argc, char *argv[])
 			char *plaintext;
 			plaintext = malloc((len2+1)*sizeof(char));
 			strcpy(plaintext,buffer);
-			printf("SERVER - plaintext: %s\n",plaintext);
+			//printf("SERVER - plaintext: %s\n",plaintext);
 			int i,c;
 			int temp,temp2;
 			char *cyphertext;
@@ -150,7 +148,7 @@ int main(int argc, char *argv[])
 			}
 			cyphertext[len2] = '\0';
 			//free and exit child
-			printf("SERVER - cyphertext: %s\n",cyphertext);
+			//printf("SERVER - cyphertext: %s\n",cyphertext);
 			charsRead = send(establishedConnectionFD, cyphertext, len2, 0);
 			close(establishedConnectionFD); // Close the existing socket which is connected to the client
 			free(mykey);
