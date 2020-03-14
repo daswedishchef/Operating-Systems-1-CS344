@@ -22,7 +22,6 @@ void send_success(int establishedConnectionFD) {
 
 char toOps(int num){
 	if(num>27){
-		fprintf(stderr,"error converting int");
 		return '0';
 	}
 	return ops[num];
@@ -160,7 +159,7 @@ int main(int argc, char *argv[])
 			//increment number of children processes and reap children
 			numchild++;
 			close(establishedConnectionFD);
-			signal(SIGCHLD, SIG_IGN);
+			signal(SIGCHLD, chldhand);
 			myotherpid = waitpid(mypid, &pstat, WNOHANG);
 		}
 	}

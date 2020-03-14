@@ -22,7 +22,6 @@ void send_success(int establishedConnectionFD) {
 
 char toOps(int num){
 	if(num>27){
-		fprintf(stderr,"error converting int");
 		return '0';
 	}
 	return ops[num];
@@ -63,7 +62,7 @@ int main(int argc, char *argv[])
 
 	// Enable the socket to begin listening
 	if (bind(listenSocketFD, (struct sockaddr *)&serverAddress, sizeof(serverAddress)) < 0) // Connect socket to port
-		error("ERROR on binding");
+		error("ERROR on binding"),exit(0);
 	listen(listenSocketFD, 5); // Flip the socket on - it can now receive up to 5 connections
 	pid_t mypid = -5;
 	pid_t myotherpid = -5;
@@ -130,7 +129,6 @@ int main(int argc, char *argv[])
 
 			int tempc;
 			c=0;
-			printf("\nLen: %d\nlen2: %d",len,len2);
 			for(i=0;i<len2;i++){
 				temp = 0;
 				temp2 = 0;
@@ -139,7 +137,14 @@ int main(int argc, char *argv[])
 					break;
 				}
 				else{
-					temp = (opsout(plaintext[i]) - opsout(mykey[c]))%27;
+					temp = (opsout(plaintext[i]) - opsout(mykey[c]));
+                    if(temp < 0){
+                        temp+=27;
+                    }
+					//fixed edge case when key and text have space at same index
+					if(temp < 0){
+                        temp+=27;
+                    }
 					cyphertext[i] = toOps(temp);
 					if(c==len){
 						c=0;
@@ -161,7 +166,7 @@ int main(int argc, char *argv[])
 			//increment number of children processes and reap children
 			numchild++;
 			close(establishedConnectionFD);
-			signal(SIGCHLD, SIG_IGN);
+			signal(SIGCHLD, chldhand);
 			myotherpid = waitpid(mypid, &pstat, WNOHANG);
 		}
 	}

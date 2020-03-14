@@ -130,11 +130,10 @@ int main(int argc, char *argv[])
 		fgets(pbuff,txnum,mytext);
 		//printf("sending: %s\n",pbuff);
 		charsWritten = send(socketFD, pbuff, txnum, 0);
-		printf("\ntxnum: %d",txnum);
 		memset(pbuff,'\0',txnum);
-		charsRead = recv(socketFD, pbuff, txnum, 0);
+		charsRead = recv(socketFD, pbuff, txnum-1, 0);
 		if(charsRead < 0) error("CLIENT: ERROR retrieving cyphertext");
-		pbuff[txnum] = '\n';
+		pbuff[txnum-1] = '\n';
 		fprintf(stdout,pbuff);
 		fclose(mytext);
 		fclose(mykey);
@@ -142,7 +141,7 @@ int main(int argc, char *argv[])
 		free(textbuff);
 	}
 	else{
-		fprintf(stderr,"This program connects exlusively with otp_enc_d\n");
+		fprintf(stderr,"This program connects exlusively with otp_dec_d\n");
 		return 1;
 	}
 	//printf("\nclient gang out\n");

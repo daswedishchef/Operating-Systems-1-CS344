@@ -131,9 +131,9 @@ int main(int argc, char *argv[])
 		//printf("sending: %s\n",pbuff);
 		charsWritten = send(socketFD, pbuff, txnum, 0);
 		memset(pbuff,'\0',txnum);
-		charsRead = recv(socketFD, pbuff, txnum, 0);
+		charsRead = recv(socketFD, pbuff, txnum-1, 0);
 		if(charsRead < 0) error("CLIENT: ERROR retrieving cyphertext");
-		pbuff[txnum] = '\n';
+		pbuff[txnum-1] = '\n';
 		fprintf(stdout,pbuff);
 		fclose(mytext);
 		fclose(mykey);
