@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
 		buffer = calloc(keynum,(keynum+1)*sizeof(char));
 		rewind(mykey);
 		char *textbuff;
-		textbuff = malloc(keynum*sizeof(char));
+		textbuff = malloc((keynum+1)*sizeof(char));
 		fgets(textbuff,keynum,mykey);
 		//printf("sending: %s\n",textbuff);
 		charsWritten = send(socketFD, textbuff, keynum, 0);
@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
 		}
 		rewind(mytext);
 		char *pbuff;
-		pbuff = malloc(txnum*sizeof(char));
+		pbuff = malloc((txnum+1)*sizeof(char));
 		fgets(pbuff,txnum,mytext);
 		//printf("sending: %s\n",pbuff);
 		charsWritten = send(socketFD, pbuff, txnum, 0);
@@ -137,8 +137,9 @@ int main(int argc, char *argv[])
 		fprintf(stdout,pbuff);
 		fclose(mytext);
 		fclose(mykey);
-		free(pbuff);
-		free(textbuff);
+		//free(pbuff);
+		//free(textbuff);
+		free(buffer);
 	}
 	else{
 		fprintf(stderr,"This program connects exlusively with otp_enc_d, port: %d\n",portNumber);

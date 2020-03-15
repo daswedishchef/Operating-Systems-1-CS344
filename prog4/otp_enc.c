@@ -8,6 +8,8 @@
 #include <netdb.h> 
 #include <stdbool.h>
 
+char ops[27] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ ";
+
 void error(const char *msg) { perror(msg); } // Error function used for reporting issues
 
 bool wait_for_success(int socketFD) {
@@ -68,7 +70,10 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 		txnum = 0;
-		while(fgetc(mytext)!=EOF){
+		while(temp=fgetc(mytext)!=EOF){
+			if(strchr(ops,temp)==NULL && temp !=  '\n'){
+				//fprintf(stderr,"Invalid character at index: %d",txnum);
+			}
 			txnum++;
 		}
 		mykey = fopen(argv[2],"r");
@@ -77,7 +82,10 @@ int main(int argc, char *argv[])
 			return 1;
 		}
 		keynum = 0;
-		while(fgetc(mykey)!=EOF){
+		while(temp=fgetc(mykey)!=EOF){
+			if(strchr(ops,temp)==NULL && temp !=  '\n'){
+				//fprintf(stderr,"Invalid character at index: %d",keynum);
+			}
 			keynum++;
 		}
 		if(keynum<txnum){
@@ -139,6 +147,7 @@ int main(int argc, char *argv[])
 		fclose(mykey);
 		free(pbuff);
 		free(textbuff);
+		free(buffer);
 	}
 	else{
 		fprintf(stderr,"This program connects exlusively with otp_enc_d, port: %d\n",portNumber);
