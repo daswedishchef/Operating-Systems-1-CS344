@@ -94,11 +94,12 @@ int main(int argc, char *argv[])
 			free(buffer);
 			buffer = calloc(len,(len+1)*sizeof(char));
 			charsRead = 0;
+			i = 0;
 			do{
 				charsRead += recv(establishedConnectionFD, &buffer[i], 1, 0);
 				i++;
 			}while(i < len);
-			//if(charsRead<len) error("Error receiving data\n");
+			if(charsRead<len) printf("Error receiving data on line: %d\n",__LINE__);
 			//copy key from buffer into mykey
 			char *mykey;
 			mykey = malloc((len+1)*sizeof(char));
@@ -112,18 +113,20 @@ int main(int argc, char *argv[])
 			free(buffer);
 			buffer = calloc(256, 256);
 			charsRead = recv(establishedConnectionFD, buffer, 24, 0);
-			if(charsRead<0) error("Error receiving data\n");
+			if(charsRead<0) printf("Error receiving data on line: %d\n",__LINE__);
 			len2 = atoi(buffer);
 			free(buffer);
 			buffer = calloc(len2,(len2+1)*sizeof(char));
 			//send success for size
 			charsRead = send(establishedConnectionFD, "success", 16, 0);
 			//read text
+			charsRead = 0;
+			i = 0;
 			do{
 				charsRead += recv(establishedConnectionFD, &buffer[i], 1, 0);
 				i++;
 			}while(i < len2);
-			if(charsRead<len2) error("Error receiving data\n");
+			if(charsRead<len2) printf("Error receiving data on line: %d\n",__LINE__);
 			//copy text into plaintext
 			char *plaintext;
 			plaintext = malloc((len2+1)*sizeof(char));
@@ -158,6 +161,7 @@ int main(int argc, char *argv[])
 			//free and exit child
 			//printf("SERVER - cyphertext: %s\n",cyphertext);
 			charsRead = 0;
+			i = 0;
 			do{
 				charsRead += send(establishedConnectionFD, &cyphertext[i], 1, 0);
 				i++;

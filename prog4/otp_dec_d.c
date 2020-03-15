@@ -43,7 +43,7 @@ void error(const char *msg) { perror(msg); } // Error function used for reportin
 
 int main(int argc, char *argv[])
 {
-	int listenSocketFD, establishedConnectionFD, portNumber, charsRead;
+	int listenSocketFD, establishedConnectionFD, portNumber, charsRead, i;
 	socklen_t sizeOfClientInfo;
 	char *buffer;
 	struct sockaddr_in serverAddress, clientAddress;
@@ -92,8 +92,12 @@ int main(int argc, char *argv[])
 			//allocate buffer for key and get it
 			free(buffer);
 			buffer = calloc(len,(len+1)*sizeof(char));
-			charsRead = recv(establishedConnectionFD, buffer, len, 0);
-			if(charsRead<len) error("Error receiving data\n");
+			charsRead = 0;
+			i = 0;
+			do{
+				charsRead += recv(establishedConnectionFD, &buffer[i], 1, 0);
+				i++;
+			}while(i < len);
 			//copy key from buffer into mykey
 			char *mykey;
 			mykey = malloc((len+1)*sizeof(char));
@@ -114,8 +118,12 @@ int main(int argc, char *argv[])
 			//send success for size
 			charsRead = send(establishedConnectionFD, "success", 16, 0);
 			//read text
-			charsRead = recv(establishedConnectionFD, buffer, len2, 0);
-			if(charsRead<len2) error("Error receiving data\n");
+			charsRead = 0;
+			i = 0;
+			do{
+				charsRead += recv(establishedConnectionFD, &buffer[i], 1, 0);
+				i++;
+			}while(i < len2);
 			//copy text into plaintext
 			char *plaintext;
 			plaintext = malloc((len2+1)*sizeof(char));
@@ -156,7 +164,12 @@ int main(int argc, char *argv[])
 			cyphertext[len2] = '\0';
 			//free and exit child
 			//printf("SERVER - plaintext: %s\n",cyphertext);
-			charsRead = send(establishedConnectionFD, cyphertext, len2, 0);
+			charsRead = 0;
+			i = 0;
+			do{
+				charsRead += send(establishedConnectionFD, &cyphertext[i], 1, 0);
+				i++;
+			}while(i < len2);
 			close(establishedConnectionFD); // Close the existing socket which is connected to the client
 			free(mykey);
 			free(buffer);

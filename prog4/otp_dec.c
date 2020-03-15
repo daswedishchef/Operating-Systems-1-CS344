@@ -13,7 +13,7 @@ void error(const char *msg) { perror(msg); } // Error function used for reportin
 bool wait_for_success(int socketFD) {
 	int charsRead;
 	char buffer[16];
-	printf("Client: Waiting for success\n");
+	//printf("Client: Waiting for success\n");
 	memset(buffer, '\0', 16);
 	charsRead = recv(socketFD, buffer, 16, 0);
 	if (charsRead < 1 || strcmp(buffer, "success"))
@@ -21,13 +21,13 @@ bool wait_for_success(int socketFD) {
 		fprintf(stderr, "Client: Server did not respond. It instead said: %s with %d\n", buffer, charsRead);
 		return false;
 	}
-	printf("Client: Got for success\n");
+	//printf("Client: Got for success\n");
 	return true;
 }
 
 int main(int argc, char *argv[])
 {
-	int socketFD, portNumber, charsWritten, charsRead;
+	int socketFD, portNumber, charsWritten, charsRead, i;
 	struct sockaddr_in serverAddress;
 	struct hostent* serverHostInfo;
 	char *buffer;
@@ -86,16 +86,9 @@ int main(int argc, char *argv[])
 		}
 		char input[24];
 		sprintf(input,"%d",keynum);
-		//do{
 		charsWritten = send(socketFD, input, 24, 0);
-		//}while(charsWritten < keynum);
 		if (charsWritten < 0) error("CLIENT: ERROR writing to socket");
-		memset(buffer,'\0',16);
-		charsRead = recv(socketFD, buffer, 16, 0);
-		if(strcmp(buffer,"success")){
-			fprintf(stderr,"Client: Server did not respond\n");
-			return 1;
-		}
+		wait_for_success(socketFD);
 		free(buffer);
 		buffer = calloc(keynum,(keynum+1)*sizeof(char));
 		rewind(mykey);
@@ -103,35 +96,38 @@ int main(int argc, char *argv[])
 		textbuff = malloc((keynum+1)*sizeof(char));
 		fgets(textbuff,keynum,mykey);
 		//printf("sending: %s\n",textbuff);
-		charsWritten = send(socketFD, textbuff, keynum, 0);
+		charsWritten = 0;
+		i = 0;
+		do{
+			charsWritten += send(socketFD, &textbuff[i], 1, 0);
+			i++;
+		}while(i < keynum);
 		//printf("Client: waiting for success");
-		memset(buffer,'\0',16);
-		charsRead = recv(socketFD, buffer, 16, 0);
-		if(strcmp(buffer,"success")){
-			fprintf(stderr,"Client: Server did not respond\n");
-			return 1;
-		}
+		wait_for_success(socketFD);
 		//send text
 		memset(input, '\0', sizeof(input));
 		sprintf(input,"%d",txnum);
 		//printf("sending: %s\n",input);
 		charsWritten = send(socketFD, input, 24, 0);
 		if (charsWritten < 0) error("CLIENT: ERROR writing to socket");
-		memset(buffer,'\0',16);
-		//printf("Client: waiting for success");
-		charsRead = recv(socketFD, buffer, 16, 0);
-		if(strcmp(buffer,"success")){
-			fprintf(stderr,"Client: Server did not respond\n");
-			return 1;
-		}
+		wait_for_success(socketFD);
 		rewind(mytext);
 		char *pbuff;
 		pbuff = malloc((txnum+1)*sizeof(char));
 		fgets(pbuff,txnum,mytext);
-		//printf("sending: %s\n",pbuff);
-		charsWritten = send(socketFD, pbuff, txnum, 0);
+		charsWritten = 0;
+		i = 0;
+		do{
+			charsWritten += send(socketFD, &pbuff[i], 1, 0);
+			i++;
+		}while(i < txnum);
 		memset(pbuff,'\0',txnum);
-		charsRead = recv(socketFD, pbuff, txnum-1, 0);
+		charsWritten = 0;
+		i = 0;
+		do{
+			charsRead += recv(socketFD, &pbuff[i], 1, 0);
+			i++;
+		}while(i < (txnum-1));
 		if(charsRead < 0) error("CLIENT: ERROR retrieving cyphertext");
 		pbuff[txnum-1] = '\n';
 		fprintf(stdout,pbuff);
