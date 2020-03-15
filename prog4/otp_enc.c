@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
 		memset(pbuff,'\0',txnum);
 		charsWritten = 0;
 		do{
-			charsRead = recv(socketFD, pbuff, 1, 0);
+			charsRead += recv(socketFD, &pbuff[i], 1, 0);
 			i++;
 		}while(i < (txnum-1));
 		if(charsRead < 0) error("CLIENT: ERROR retrieving cyphertext");
