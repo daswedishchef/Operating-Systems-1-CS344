@@ -23,7 +23,6 @@ key20 exists!
 #-----------------------------------------
 #otp_enc plaintext1 key70000 $encport
 #20 POINTS: Should return encrypted version of plaintext1
-MEBMZSFXQTCHOQNCOKAVSNICKXYIWPEJNB H
 
 #-----------------------------------------
 #otp_enc plaintext1 key70000 $encport > ciphertext1
@@ -39,7 +38,7 @@ ciphertext1 exists!
 
 #-----------------------------------------
 #5 POINTS: ciphertext1 should look encrypted
-MEBMZSFXQTCHOQNCOKAVSNICKXYIWPEJNB H
+DBNXNE NTQXXCGAPWQXOFSXABFFTSUQXP II
 
 #-----------------------------------------
 #otp_dec ciphertext1 key70000 $encport
@@ -50,36 +49,35 @@ MEBMZSFXQTCHOQNCOKAVSNICKXYIWPEJNB H
 #cat plaintext1
 THE RED GOOSE FLIES AT MIDNIGHT STOP
 #otp_dec ciphertext1 key70000 $decport
-THE RED GOOSE FLIES AT MIDNIGHT STOP
 
 #-----------------------------------------
 #otp_dec ciphertext1 key70000 $decport > plaintext1_a
 #10 POINTS: plaintext1_a must exist
-plaintext1_a exists!
+plaintext1_a DOES NOT EXIST
 
 #-----------------------------------------
 #cmp plaintext1 plaintext1_a
 #5 POINTS: plaintext1 must be the same as plaintext1_a:
 #echo $? should be == 0, which means the cmp succeeded!
-0
+2
 
 #-----------------------------------------
 #20 POINTS: concurrent test of encryption - look for 4 properly-sized ciphertext# files, or 5 where the 5th is 0 bytes
 #5 POINTS: Should be only one error about plaintext5 being bad
 Ten second sleep, your program must complete in this time
-total 1696
-drwxrwx---. 2 carlsosp upg4137   845 Mar 14 20:21 ./
+total 1672
+drwxrwx---. 2 carlsosp upg4137   845 Mar 14 20:25 ./
 drwxrwx---. 8 carlsosp upg4137   199 Mar 14 16:09 ../
 -rw-rw----. 1 carlsosp upg4137    37 Mar 14 19:59 butt
--rw-rw----. 1 carlsosp upg4137    37 Mar 14 20:21 ciphertext1
--rw-rw----. 1 carlsosp upg4137   317 Mar 14 20:21 ciphertext2
--rw-rw----. 1 carlsosp upg4137    17 Mar 14 20:21 ciphertext3
--rw-rw----. 1 carlsosp upg4137 69333 Mar 14 20:21 ciphertext4
--rw-rw----. 1 carlsosp upg4137    46 Mar 14 20:21 ciphertext5
+-rw-rw----. 1 carlsosp upg4137    37 Mar 14 20:25 ciphertext1
+-rw-rw----. 1 carlsosp upg4137   317 Mar 14 20:25 ciphertext2
+-rw-rw----. 1 carlsosp upg4137     0 Mar 14 20:25 ciphertext3
+-rw-rw----. 1 carlsosp upg4137 21888 Mar 14 20:25 ciphertext4
+-rw-rw----. 1 carlsosp upg4137     0 Mar 14 20:25 ciphertext5
 -rw-rw----. 1 carlsosp upg4137  2607 Mar  9 19:53 client.c
 -rwxrwx---. 1 carlsosp upg4137   142 Mar 14 04:35 compileall
--rw-rw----. 1 carlsosp upg4137    21 Mar 14 20:21 key20
--rw-rw----. 1 carlsosp upg4137 70001 Mar 14 20:21 key70000
+-rw-rw----. 1 carlsosp upg4137    21 Mar 14 20:25 key20
+-rw-rw----. 1 carlsosp upg4137 70001 Mar 14 20:25 key70000
 -rwxrwx---. 1 carlsosp upg4137  8912 Mar 14 20:17 keygen
 -rw-rw----. 1 carlsosp upg4137   686 Mar  9 19:35 keygen.c
 -rw-rw----. 1 carlsosp upg4137  7714 Mar 14 16:57 mytestresults
@@ -99,25 +97,25 @@ drwxrwx---. 8 carlsosp upg4137   199 Mar 14 16:09 ../
 -rw-rw----. 1 carlsosp upg4137 69333 Mar 14 16:16 plaintext4
 -rw-rw----. 1 carlsosp upg4137    42 Mar 14 16:16 plaintext5
 -rw-rw----. 1 carlsosp upg4137  2514 Mar  9 19:55 server.c
--rw-rw----. 1 carlsosp upg4137  2335 Mar 14 20:21 testresults
+-rw-rw----. 1 carlsosp upg4137  2268 Mar 14 20:25 testresults
 -rw-rw----. 1 carlsosp upg4137    37 Mar 14 19:59 todec
 
 #-----------------------------------------
 #15 POINTS: concurrent test of decryption - look for 4 plaintext#_a files that match the plaintext# files
 #Ten second sleep, your program must complete in this time
-total 2344
-drwxrwx---. 2 carlsosp upg4137   965 Mar 14 20:21 ./
+total 2152
+drwxrwx---. 2 carlsosp upg4137   965 Mar 14 20:25 ./
 drwxrwx---. 8 carlsosp upg4137   199 Mar 14 16:09 ../
 -rw-rw----. 1 carlsosp upg4137    37 Mar 14 19:59 butt
--rw-rw----. 1 carlsosp upg4137    37 Mar 14 20:21 ciphertext1
--rw-rw----. 1 carlsosp upg4137   317 Mar 14 20:21 ciphertext2
--rw-rw----. 1 carlsosp upg4137    17 Mar 14 20:21 ciphertext3
--rw-rw----. 1 carlsosp upg4137 69333 Mar 14 20:21 ciphertext4
--rw-rw----. 1 carlsosp upg4137    46 Mar 14 20:21 ciphertext5
+-rw-rw----. 1 carlsosp upg4137    37 Mar 14 20:25 ciphertext1
+-rw-rw----. 1 carlsosp upg4137   317 Mar 14 20:25 ciphertext2
+-rw-rw----. 1 carlsosp upg4137     0 Mar 14 20:25 ciphertext3
+-rw-rw----. 1 carlsosp upg4137 21888 Mar 14 20:25 ciphertext4
+-rw-rw----. 1 carlsosp upg4137     0 Mar 14 20:25 ciphertext5
 -rw-rw----. 1 carlsosp upg4137  2607 Mar  9 19:53 client.c
 -rwxrwx---. 1 carlsosp upg4137   142 Mar 14 04:35 compileall
--rw-rw----. 1 carlsosp upg4137    21 Mar 14 20:21 key20
--rw-rw----. 1 carlsosp upg4137 70001 Mar 14 20:21 key70000
+-rw-rw----. 1 carlsosp upg4137    21 Mar 14 20:25 key20
+-rw-rw----. 1 carlsosp upg4137 70001 Mar 14 20:25 key70000
 -rwxrwx---. 1 carlsosp upg4137  8912 Mar 14 20:17 keygen
 -rw-rw----. 1 carlsosp upg4137   686 Mar  9 19:35 keygen.c
 -rw-rw----. 1 carlsosp upg4137  7714 Mar 14 16:57 mytestresults
@@ -132,16 +130,16 @@ drwxrwx---. 8 carlsosp upg4137   199 Mar 14 16:09 ../
 -rwxrwx---. 1 carlsosp upg4137  5085 Mar 14 15:12 p4gradingscript
 -rw-rw----. 1 carlsosp upg4137    51 Mar 14 15:37 plaintext
 -rw-rw----. 1 carlsosp upg4137    37 Mar 14 16:16 plaintext1
--rw-rw----. 1 carlsosp upg4137    37 Mar 14 20:21 plaintext1_a
+-rw-rw----. 1 carlsosp upg4137     0 Mar 14 20:25 plaintext1_a
 -rw-rw----. 1 carlsosp upg4137   317 Mar 14 16:16 plaintext2
--rw-rw----. 1 carlsosp upg4137   317 Mar 14 20:21 plaintext2_a
+-rw-rw----. 1 carlsosp upg4137   317 Mar 14 20:25 plaintext2_a
 -rw-rw----. 1 carlsosp upg4137    17 Mar 14 16:16 plaintext3
--rw-rw----. 1 carlsosp upg4137    17 Mar 14 20:21 plaintext3_a
+-rw-rw----. 1 carlsosp upg4137     6 Mar 14 20:25 plaintext3_a
 -rw-rw----. 1 carlsosp upg4137 69333 Mar 14 16:16 plaintext4
--rw-rw----. 1 carlsosp upg4137 69333 Mar 14 20:21 plaintext4_a
+-rw-rw----. 1 carlsosp upg4137 21888 Mar 14 20:25 plaintext4_a
 -rw-rw----. 1 carlsosp upg4137    42 Mar 14 16:16 plaintext5
 -rw-rw----. 1 carlsosp upg4137  2514 Mar  9 19:55 server.c
--rw-rw----. 1 carlsosp upg4137  4530 Mar 14 20:21 testresults
+-rw-rw----. 1 carlsosp upg4137  4463 Mar 14 20:25 testresults
 -rw-rw----. 1 carlsosp upg4137    37 Mar 14 19:59 todec
 
 #-----------------------------------------

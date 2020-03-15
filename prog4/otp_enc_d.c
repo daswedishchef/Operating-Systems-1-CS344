@@ -68,6 +68,7 @@ int main(int argc, char *argv[])
 	pid_t mypid = -5;
 	pid_t myotherpid = -5;
 	int pstat = -5;
+	int i;
 	while(1){
 		// Accept a connection, blocking if one is not available until one connects
 		do{
@@ -92,8 +93,12 @@ int main(int argc, char *argv[])
 			//allocate buffer for key and get it
 			free(buffer);
 			buffer = calloc(len,(len+1)*sizeof(char));
-			charsRead = recv(establishedConnectionFD, buffer, len, 0);
-			if(charsRead<len) error("Error receiving data\n");
+			charsRead = 0;
+			do{
+				charsRead += recv(establishedConnectionFD, &buffer[i], 1, 0);
+				i++;
+			}while(i < len);
+			//if(charsRead<len) error("Error receiving data\n");
 			//copy key from buffer into mykey
 			char *mykey;
 			mykey = malloc((len+1)*sizeof(char));
@@ -114,14 +119,17 @@ int main(int argc, char *argv[])
 			//send success for size
 			charsRead = send(establishedConnectionFD, "success", 16, 0);
 			//read text
-			charsRead = recv(establishedConnectionFD, buffer, len2, 0);
+			do{
+				charsRead += recv(establishedConnectionFD, &buffer[i], 1, 0);
+				i++;
+			}while(i < len2);
 			if(charsRead<len2) error("Error receiving data\n");
 			//copy text into plaintext
 			char *plaintext;
 			plaintext = malloc((len2+1)*sizeof(char));
 			strcpy(plaintext,buffer);
 			//printf("SERVER - plaintext: %s\n",plaintext);
-			int i,c;
+			int c;
 			int temp,temp2;
 			char *cyphertext;
 			cyphertext = malloc((len2+1)*sizeof(char));
@@ -149,7 +157,12 @@ int main(int argc, char *argv[])
 			cyphertext[len2] = '\0';
 			//free and exit child
 			//printf("SERVER - cyphertext: %s\n",cyphertext);
-			charsRead = send(establishedConnectionFD, cyphertext, len2, 0);
+			charsRead = 0;
+			do{
+				charsRead += send(establishedConnectionFD, &cyphertext[i], 1, 0);
+				i++;
+			}while(i < len2);
+			//charsRead = send(establishedConnectionFD, cyphertext, len2, 0);
 			close(establishedConnectionFD); // Close the existing socket which is connected to the client
 			free(mykey);
 			free(buffer);

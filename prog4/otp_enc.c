@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 	if (charsRead < 3) error("CLIENT: ERROR reading from socket");
 	if(!strcmp(buffer,"enc")){
 		// Send message to server
-		int keynum,txnum;
+		int keynum,txnum, i;
 		char temp;
 		FILE *mytext;
 		FILE *mykey;
@@ -111,7 +111,11 @@ int main(int argc, char *argv[])
 		textbuff = malloc(keynum*sizeof(char));
 		fgets(textbuff,keynum,mykey);
 		//printf("sending: %s\n",textbuff);
-		charsWritten = send(socketFD, textbuff, keynum, 0);
+		charsWritten = 0;
+		do{
+			charsWritten += send(socketFD, &textbuff[i], 1, 0);
+			i++;
+		}while(i < keynum);
 		//printf("Client: waiting for success");
 		memset(buffer,'\0',16);
 		charsRead = recv(socketFD, buffer, 16, 0);
@@ -137,9 +141,17 @@ int main(int argc, char *argv[])
 		pbuff = malloc(txnum*sizeof(char));
 		fgets(pbuff,txnum,mytext);
 		//printf("sending: %s\n",pbuff);
-		charsWritten = send(socketFD, pbuff, txnum, 0);
+		charsWritten = 0;
+		do{
+			charsWritten += send(socketFD, &pbuff[i], 1, 0);
+			i++;
+		}while(i < txnum);
 		memset(pbuff,'\0',txnum);
-		charsRead = recv(socketFD, pbuff, txnum-1, 0);
+		charsWritten = 0;
+		do{
+			charsRead = recv(socketFD, pbuff, 1, 0);
+			i++;
+		}while(i < (txnum-1));
 		if(charsRead < 0) error("CLIENT: ERROR retrieving cyphertext");
 		pbuff[txnum-1] = '\n';
 		fprintf(stdout,pbuff);
